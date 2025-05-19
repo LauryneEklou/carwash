@@ -16,25 +16,25 @@ Ce projet est une application de gestion d'une station de lavage automobile. Il 
 - **Base de données** : `SQLITE`
 
 ## Comment exécuter le projet
-# Cloner le dépôt
+## Cloner le dépôt
 git clone https://github.com/LauryneEklou/carwash.git
 
-# Accéder au dossier du projet
+## Accéder au dossier du projet
 cd carwash
 
-# (Optionnel) Créer et activer un environnement virtuel
+## (Optionnel) Créer et activer un environnement virtuel
 python -m venv env
 source env/bin/activate  # Sur Windows : env\Scripts\activate
 
-# Installer les dépendances
+## Installer les dépendances
 pip install -r requirements.txt
 
-# Appliquer les migrations (initialiser la base de données SQLite)
+## Appliquer les migrations (initialiser la base de données SQLite)
 python manage.py migrate
 
-# (Optionnel) Créer un superutilisateur pour accéder à l’admin
+## (Optionnel) Créer un superutilisateur pour accéder à l’admin
 python manage.py createsuperuser
 
-# Lancer le serveur de développement
+## Lancer le serveur de développement
 python manage.py runserver
 
