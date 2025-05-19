@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tableau de bord - CarWash Pro{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-8">
+            <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
+                Tableau de bord employé
+            </h1>
+            <div class="flex space-x-4">
+                <span class="text-sm bg-gray-800 px-4 py-2 rounded-full border border-gray-700">
+                    <span class="animate-pulse inline-block h-2 w-2 mr-2 rounded-full bg-green-500"></span>
+                    En service
+                </span>
+            </div>
+        </div>
+
+        <!-- Today's Appointments -->
+        <div class="bg-gray-800/50 rounded-2xl backdrop-blur-xl border border-gray-700/50 p-6 mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-semibold text-white">Rendez-vous du jour</h2>
+                <span class="px-3 py-1 text-xs rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                    Aujourd'hui
+                </span>
+            </div>
+            {% if appointments %}
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="text-left border-b border-gray-700">
+                            <th class="pb-3 text-sm font-medium text-gray-400">Heure</th>
+                            <th class="pb-3 text-sm font-medium text-gray-400">Client</th>
+                            <th class="pb-3 text-sm font-medium text-gray-400">Service</th>
+                            <th class="pb-3 text-sm font-medium text-gray-400">Véhicule</th>
+                            <th class="pb-3 text-sm font-medium text-gray-400">Statut</th>
+                            <th class="pb-3 text-sm font-medium text-gray-400">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for appointment in appointments %}
+                        <tr class="border-b border-gray-800 hover:bg-gray-800/30 transition-colors">
+                            <td class="py-4 text-sm">{{ appointment.appointment_date|date:"H:i" }}</td>
+                            <td class="py-4 text-sm">{{ appointment.client.get_full_name }}</td>
+                            <td class="py-4 text-sm">{{ appointment.service.name }}</td>
+                            <td class="py-4 text-sm">{{ appointment.vehicle.brand }} {{ appointment.vehicle.model }}</td>
+                            <td class="py-4 text-sm">
+                                <span class="px-3 py-1 rounded-full text-xs font-medium 
+                                    {% if appointment.status == 'pending' %}bg-amber-500/20 text-amber-300 border border-amber-500/30
+                                    {% elif appointment.status == 'confirmed' %}bg-blue-500/20 text-blue-300 border border-blue-500/30
+                                    {% elif appointment.status == 'completed' %}bg-emerald-500/20 text-emerald-300 border border-emerald-500/30
+                                    {% elif appointment.status == 'cancelled' %}bg-red-500/20 text-red-300 border border-red-500/30
+                                    {% endif %}">
+                                    {{ appointment.get_status_display }}
+                                </span>
+                            </td>
+                            <td class="py-4 text-sm">
+                                <a href="{% url 'appointment_detail' appointment.id %}" 
+                                   class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-700 hover:bg-gray-600 transition-colors">
+                                    Détails
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-8 text-gray-400">
+                <svg class="mx-auto h-12 w-12 mb-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <p>Aucun rendez-vous aujourd'hui.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Upcoming Appointments -->
+        <div class="bg-gray-800/50 rounded-2xl backdrop-blur-xl border border-gray-700/50 p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-semibold text-white">Rendez-vous à venir</h2>
+                <span class="px-3 py-1 text-xs rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                    Prochains jours
+                </span>
+            </div>
+            {% if upcoming_appointments %}
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="text-left border-b border-gray-700">
+                            <th class="pb-3 text-sm font-medium text-gray-400">Date</th>
+                            <th class="pb-3 text-sm font-medium text-gray-400">Heure</th>
+                            <th class="pb-3 text-sm font-medium text-gray-400">Client</th>
+                            <th class="pb-3 text-sm font-medium text-gray-400">Service</th>
+                            <th class="pb-3 text-sm font-medium text-gray-400">Statut</th>
+                            <th class="pb-3 text-sm font-medium text-gray-400">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for appointment in upcoming_appointments %}
+                        <tr class="border-b border-gray-800 hover:bg-gray-800/30 transition-colors">
+                            <td class="py-4 text-sm">{{ appointment.appointment_date|date:"d/m/Y" }}</td>
+                            <td class="py-4 text-sm">{{ appointment.appointment_date|date:"H:i" }}</td>
+                            <td class="py-4 text-sm">{{ appointment.client.get_full_name }}</td>
+                            <td class="py-4 text-sm">{{ appointment.service.name }}</td>
+                            <td class="py-4 text-sm">
+                                <span class="px-3 py-1 rounded-full text-xs font-medium 
+                                    {% if appointment.status == 'pending' %}bg-amber-500/20 text-amber-300 border border-amber-500/30
+                                    {% elif appointment.status == 'confirmed' %}bg-blue-500/20 text-blue-300 border border-blue-500/30
+                                    {% elif appointment.status == 'completed' %}bg-emerald-500/20 text-emerald-300 border border-emerald-500/30
+                                    {% elif appointment.status == 'cancelled' %}bg-red-500/20 text-red-300 border border-red-500/30
+                                    {% endif %}">
+                                    {{ appointment.get_status_display }}
+                                </span>
+                            </td>
+                            <td class="py-4 text-sm">
+                                <a href="{% url 'appointment_detail' appointment.id %}" 
+                                   class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-700 hover:bg-gray-600 transition-colors">
+                                    Détails
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-8 text-gray-400">
+                <svg class="mx-auto h-12 w-12 mb-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <p>Aucun rendez-vous à venir.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

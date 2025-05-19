@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="fr" class="h-full bg-black scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CarWash Pro{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{% static 'css/custom.css' %}" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0f172a',
+                        secondary: '#3b82f6',
+                        accent: '#f04444'
+                    },
+                    fontFamily: {
+                        sans: ['Manrope', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Animation Utilities */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .animate-on-scroll.animate-fade-up {
+            transform: translateY(30px);
+        }
+
+        .animate-on-scroll.animate-fade-left {
+            transform: translateX(-30px);
+        }
+
+        .animate-on-scroll.animate-fade-right {
+            transform: translateX(30px);
+        }
+
+        .animate-on-scroll.animate-scale {
+            transform: scale(0.9);
+        }
+
+        .animate-on-scroll.animate-rotate {
+            transform: rotate(-5deg);
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translate(0) scale(1) rotate(0);
+        }
+
+        /* Parallax Effect */
+        .parallax {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Smooth Reveal */
+        .reveal-mask {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reveal-mask::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(110deg, #000, #111);
+            transform: translateX(-100%);
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal-mask.visible::after {
+            transform: translateX(100%);
+        }
+
+        /* Enhanced Glass Effect */
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .glass-effect:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Navbar spacer pour éviter que le contenu soit caché par la navbar fixe */
+        .navbar-spacer {
+            height: 80px; /* Même hauteur que la navbar (h-20) */
+        }
+
+        /* Applique un padding-top aux contenus qui commencent immédiatement après la navbar */
+        main {
+            padding-top: 1rem; /* Espace supplémentaire global */
+        }
+
+        /* Assure que le message d'alerte est bien positionné sous la navbar */
+        .messages-container {
+            padding-top: 80px; /* Même hauteur que la navbar */
+        }
+    </style>
+</head>
+
+<body class="h-full bg-black font-sans">
+    <div class="min-h-full">
+        <!-- Modern Navbar -->
+        <nav class="fixed w-full z-50 bg-black/80 backdrop-blur-lg border-b border-white/10">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="flex h-20 items-center justify-between">
+                    <div class="flex items-center">
+                        <a href="{% url 'home' %}" class="flex items-center space-x-3 group">
+                            <div class="h-10 w-10 rounded-xl bg-gradient-to-r from-accent to-secondary flex items-center justify-center transform group-hover:scale-110 transition-all duration-300">
+                                <span class="text-xl font-bold text-white">CP</span>
+                            </div>
+                            <span class="text-2xl font-bold bg-gradient-to-r from-accent to-secondary bg-clip-text text-transparent group-hover:scale-105 transition-all duration-300">CarWash Pro</span>
+                        </a>
+                        <div class="hidden md:block ml-12">
+                            <div class="flex items-baseline space-x-8">
+                                <a href="{% url 'home' %}" class="px-4 py-2 text-sm font-medium text-white hover:text-accent transition-colors duration-300">Accueil</a>
+                                <a href="{% url 'services' %}" class="px-4 py-2 text-sm font-medium text-white hover:text-accent transition-colors duration-300">Services</a>
+                                {% if user.is_authenticated %}
+                                <a href="{% url 'appointments' %}" class="px-4 py-2 text-sm font-medium text-white hover:text-accent transition-colors duration-300">Rendez-vous</a>
+                                {% endif %}
+                                {% if user.is_admin %}
+                                <a href="{% url 'admin_dashboard' %}" class="px-4 py-2 text-sm font-medium text-white hover:text-accent transition-colors duration-300">Tableau de bord</a>
+                                <a href="{% url 'employee_list' %}" class="px-4 py-2 text-sm font-medium text-white hover:text-accent transition-colors duration-300">Employés</a>
+                                {% endif %}
+                                {% if user.is_employee %}
+                                <a href="{% url 'employee_dashboard' %}" class="px-4 py-2 text-sm font-medium text-white hover:text-accent transition-colors duration-300">Tableau de bord</a>
+                                <a href="{% url 'washer_appointments' %}" class="px-4 py-2 text-sm font-medium text-white hover:text-accent transition-colors duration-300">Mes Lavages</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hidden md:block">
+                        <div class="flex items-center gap-6">
+                            {% if user.is_authenticated %}
+                            <div class="relative">
+                                <button type="button" class="flex items-center space-x-3 glass-effect rounded-xl px-4 py-2.5 text-sm font-medium text-white hover:bg-white/10 transition-all duration-300" id="user-menu-button">
+                                    <span class="h-8 w-8 rounded-lg bg-gradient-to-r from-accent to-secondary flex items-center justify-center transform group-hover:scale-110 transition-all duration-300">
+                                        {{ user.get_full_name|default:user.username|make_list|first }}
+                                    </span>
+                                    <span>{{ user.get_full_name|default:user.username }}</span>
+                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div class="hidden absolute right-0 z-10 mt-2 w-48 glass-effect rounded-xl py-2 shadow-xl ring-1 ring-white/10" role="menu" id="user-menu">
+                                    <a href="{% url 'profile' %}" class="block px-4 py-2.5 text-sm text-white hover:bg-white/10 transition-colors duration-300" role="menuitem">Mon profil</a>
+                                    <form method="post" action="{% url 'logout' %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="block w-full text-left px-4 py-2.5 text-sm text-white hover:bg-white/10 transition-colors duration-300">Déconnexion</button>
+                                    </form>
+                                </div>
+                            </div>
+                            {% else %}
+                            <a href="{% url 'login' %}" class="px-4 py-2 text-sm font-medium text-white hover:text-accent transition-colors duration-300">Connexion</a>
+                            <a href="{% url 'register' %}" class="btn-animate bg-gradient-to-r from-accent to-secondary rounded-xl px-6 py-2.5 text-sm font-medium text-white shadow-lg hover:shadow-accent/50 transform hover:-translate-y-0.5 transition-all duration-300">
+                                S'inscrire
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="md:hidden">
+                        <button type="button" class="glass-effect rounded-lg p-2.5 text-white hover:bg-white/10 transition-all duration-300" id="mobile-menu-button">
+                            <span class="sr-only">Ouvrir le menu</span>
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile menu -->
+            <div class="hidden md:hidden bg-black/95 backdrop-blur-lg border-t border-white/10" id="mobile-menu">
+                <div class="space-y-1 px-4 pb-3 pt-2">
+                    <a href="{% url 'home' %}" class="block px-4 py-2.5 text-base font-medium text-white hover:bg-white/10 rounded-xl transition-all duration-300">Accueil</a>
+                    <a href="{% url 'services' %}" class="block px-4 py-2.5 text-base font-medium text-white hover:bg-white/10 rounded-xl transition-all duration-300">Services</a>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'appointments' %}" class="block px-4 py-2.5 text-base font-medium text-white hover:bg-white/10 rounded-xl transition-all duration-300">Rendez-vous</a>
+                    {% endif %}
+                    {% if user.is_admin %}
+                    <a href="{% url 'admin_dashboard' %}" class="block px-4 py-2.5 text-base font-medium text-white hover:bg-white/10 rounded-xl transition-all duration-300">Tableau de bord</a>
+                    <a href="{% url 'employee_list' %}" class="block px-4 py-2.5 text-base font-medium text-white hover:bg-white/10 rounded-xl transition-all duration-300">Employés</a>
+                    {% endif %}
+                    {% if user.is_employee %}
+                    <a href="{% url 'employee_dashboard' %}" class="block px-4 py-2.5 text-base font-medium text-white hover:bg-white/10 rounded-xl transition-all duration-300">Tableau de bord</a>
+                    <a href="{% url 'washer_appointments' %}" class="block px-4 py-2.5 text-base font-medium text-white hover:bg-white/10 rounded-xl transition-all duration-300">Mes Lavages</a>
+                    {% endif %}
+                </div>
+                {% if user.is_authenticated %}
+                <div class="border-t border-white/10 pb-3 pt-4">
+                    <div class="flex items-center px-5">
+                        <div class="flex-shrink-0">
+                            <span class="h-10 w-10 rounded-xl bg-gradient-to-r from-accent to-secondary flex items-center justify-center text-white font-medium">
+                                {{ user.get_full_name|default:user.username|make_list|first }}
+                            </span>
+                        </div>
+                        <div class="ml-3">
+                            <div class="text-base font-medium text-white">{{ user.get_full_name|default:user.username }}</div>
+                            <div class="text-sm text-gray-400">{{ user.email }}</div>
+                        </div>
+                    </div>
+                    <div class="mt-3 space-y-1 px-4">
+                        <a href="{% url 'profile' %}" class="block px-4 py-2.5 text-base font-medium text-white hover:bg-white/10 rounded-xl transition-all duration-300">Mon profil</a>
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="block w-full text-left px-4 py-2.5 text-base font-medium text-white hover:bg-white/10 rounded-xl transition-all duration-300">Déconnexion</button>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </nav>
+
+        {% if messages %}
+        <div class="fixed top-20 right-4 z-50 w-96 space-y-4">
+            {% for message in messages %}
+            <div class="glass-effect rounded-lg p-4 animate-fade-in {% if message.tags == 'success' %}border-l-4 border-green-500{% elif message.tags == 'error' %}border-l-4 border-red-500{% else %}border-l-4 border-blue-500{% endif %}">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        {% if message.tags == 'success' %}
+                        <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                        {% elif message.tags == 'error' %}
+                        <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
+                        {% else %}
+                        <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                        </svg>
+                        {% endif %}
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-white">{{ message }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Spacer pour compenser la navbar fixe -->
+        <div class="navbar-spacer"></div>
+
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer class="bg-black">
+            <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="glass-effect rounded-xl p-6 hover-lift">
+                        <h3 class="text-lg font-semibold text-white mb-4">CarWash Pro</h3>
+                        <p class="text-gray-400">Votre partenaire de confiance pour l'entretien de votre véhicule.</p>
+                    </div>
+                    <div class="glass-effect rounded-xl p-6 hover-lift">
+                        <h3 class="text-lg font-semibold text-white mb-4">Contact</h3>
+                        <p class="text-gray-400">
+                            <i class="fas fa-phone mr-2"></i>+228 70 66 12 26<br>
+                            <i class="fas fa-envelope mr-2"></i> welaurynefadilou@carwashpro.fr
+                        </p>
+                    </div>
+                    <div class="glass-effect rounded-xl p-6 hover-lift">
+                        <h3 class="text-lg font-semibold text-white mb-4">Suivez-nous</h3>
+                        <div class="flex space-x-4">
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="Facebook">
+                                <i class="fab fa-facebook-f text-xl"></i>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="Twitter">
+                                <i class="fab fa-twitter text-xl"></i>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="Instagram">
+                                <i class="fab fa-instagram text-xl"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Enhanced scroll animations
+        function handleScrollAnimations() {
+            const elements = document.querySelectorAll('.animate-on-scroll, .parallax');
+            
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementBottom = element.getBoundingClientRect().bottom;
+                const windowHeight = window.innerHeight;
+                
+                // Calculate scroll percentage for parallax
+                if (element.classList.contains('parallax')) {
+                    const scrolled = window.scrollY;
+                    const speed = element.dataset.speed || 0.2;
+                    element.style.transform = `translateY(${scrolled * speed}px)`;
+                }
+                
+                // Animate elements when they come into view
+                if (element.classList.contains('animate-on-scroll')) {
+                    const isVisible = elementTop < windowHeight - 100 && elementBottom > 0;
+                    
+                    if (isVisible) {
+                        element.classList.add('visible');
+                        
+                        // Add stagger effect for child elements
+                        if (element.classList.contains('stagger-children')) {
+                            Array.from(element.children).forEach((child, index) => {
+                                child.style.transitionDelay = `${index * 0.1}s`;
+                                child.classList.add('visible');
+                            });
+                        }
+                    }
+                }
+            });
+        }
+
+        // Smooth scroll to anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Initialize intersection observer for better performance
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        document.querySelectorAll('.animate-on-scroll').forEach(element => {
+            observer.observe(element);
+        });
+
+        // Navbar scroll effect
+        function handleNavbarScroll() {
+            const navbar = document.querySelector('.navbar-modern');
+            if (window.scrollY > 0) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        }
+
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // User menu toggle
+        const userMenuButton = document.getElementById('user-menu-button');
+        const userMenu = document.getElementById('user-menu');
+        
+        if (userMenuButton) {
+            userMenuButton.addEventListener('click', () => {
+                userMenu.classList.toggle('hidden');
+            });
+        }
+
+        // Initialize scroll handlers
+        window.addEventListener('scroll', () => {
+            handleScrollAnimations();
+            handleNavbarScroll();
+        });
+        window.addEventListener('load', () => {
+            handleScrollAnimations();
+            handleNavbarScroll();
+        });
+
+        // Auto-hide messages after 5 seconds
+        const messages = document.querySelectorAll('.messages > div');
+        messages.forEach(message => {
+            setTimeout(() => {
+                message.style.opacity = '0';
+                setTimeout(() => message.remove(), 300);
+            }, 5000);
+        });
+    </script>
+</body>
+</html>

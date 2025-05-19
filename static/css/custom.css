@@ -1,0 +1,235 @@
+/* Import Manrope font */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
+
+/* Base styles */
+:root {
+    --primary: #0f172a;
+    --secondary: #3b82f6;
+    --accent: #f04444;
+    --text: #ffffff;
+}
+
+body {
+    font-family: 'Manrope', sans-serif;
+}
+
+/* Custom animations */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slideInLeft {
+    from { transform: translateX(-100px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* Animation classes */
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+.fade-in-scroll {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s ease-out;
+}
+
+.fade-in-scroll.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.slide-in-left {
+    opacity: 0;
+    transform: translateX(-100px);
+    transition: all 0.6s ease-out;
+}
+
+.slide-in-left.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.slide-in-right {
+    opacity: 0;
+    transform: translateX(100px);
+    transition: all 0.6s ease-out;
+}
+
+.slide-in-right.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.scale-in-scroll {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: all 0.6s ease-out;
+}
+
+.scale-in-scroll.visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Custom gradients */
+.gradient-primary {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+.gradient-secondary {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.gradient-accent {
+    background: linear-gradient(135deg, #f04444 0%, #dc2626 100%);
+}
+
+/* Glass effect */
+.glass-effect {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-effect-dark {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Custom shadows */
+.shadow-soft {
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+}
+
+.shadow-card {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+/* Hover effects */
+.hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1e293b;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #3b82f6;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #2563eb;
+}
+
+/* Modern form styles */
+.form-input-modern {
+    @apply rounded-lg border-gray-200 bg-gray-50 focus:border-secondary focus:ring-secondary;
+    transition: all 0.2s ease;
+}
+
+.form-input-modern:focus {
+    @apply bg-white shadow-soft;
+}
+
+/* Button animations */
+.btn-animate {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-animate::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 120%;
+    height: 120%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%) scale(0);
+    border-radius: 50%;
+    transition: transform 0.5s ease;
+}
+
+.btn-animate:hover::after {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Navbar styles */
+.navbar-modern {
+    @apply fixed w-full z-50 transition-all duration-300 text;
+}
+
+.navbar-modern.scrolled {
+    @apply glass-effect-dark shadow-lg;
+}
+
+/* Typography */
+.gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-secondary to-accent;
+}
+
+/* Border styles */
+.border-gradient {
+    border: 2px solid;
+    border-image-slice: 1;
+    border-image-source: linear-gradient(to right, #3b82f6, #f04444);
+}
+
+/* Card styles */
+.card-modern {
+    @apply glass-effect rounded-xl p-6 hover-lift transition-all;
+}
+
+/* Navigation menu */
+.nav-link {
+    @apply text-gray-300 hover:text-white transition-colors relative;
+}
+
+.nav-link::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-accent transition-all duration-300;
+}
+
+.nav-link:hover::after {
+    @apply w-full;
+}
+
+/* Responsive styles */
+@media (max-width: 640px) {
+    .container {
+        @apply px-4;
+    }
+} 

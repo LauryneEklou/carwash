@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ajouter un véhicule - CarWash Pro{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-10">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-gray-800/30 backdrop-blur-xl shadow-lg border border-white/10 rounded-2xl overflow-hidden">
+            <!-- Header -->
+            <div class="px-6 py-5 border-b border-white/10">
+                <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
+                    Ajouter un véhicule
+                </h1>
+                <p class="mt-1 text-gray-400">Enregistrez les informations de votre véhicule pour faciliter vos rendez-vous
+                </p>
+            </div>
+            
+            <!-- Formulaire -->
+            <div class="px-6 py-5">
+                <form method="post" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="brand" class="block text-sm font-medium text-gray-300">Marque</label>
+                            <input type="text" id="brand" name="brand" required 
+                                class="mt-1 block w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label for="model" class="block text-sm font-medium text-gray-300">Modèle</label>
+                            <input type="text" id="model" name="model" required 
+                                class="mt-1 block w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="year" class="block text-sm font-medium text-gray-300">Année</label>
+                            <input type="number" id="year" name="year" min="1900" max="2025" required 
+                                class="mt-1 block w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label for="license_plate" class="block text-sm font-medium text-gray-300">Immatriculation</label>
+                            <input type="text" id="license_plate" name="license_plate" required 
+                                class="mt-1 block w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="color" class="block text-sm font-medium text-gray-300">Couleur</label>
+                        <input type="text" id="color" name="color" required 
+                            class="mt-1 block w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    
+                    <div class="flex items-center justify-between pt-4">
+                        <a href="{% url 'profile' %}" class="inline-flex items-center px-4 py-2 border border-gray-600 shadow-sm text-sm font-medium rounded-xl text-white bg-transparent hover:bg-gray-700 focus:outline-none transition-colors duration-300">
+                            <svg class="mr-2 -ml-1 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Annuler
+                        </a>
+                        <button type="submit" class="inline-flex justify-center px-6 py-2.5 bg-gradient-to-r from-blue-500 to-emerald-500 text-white font-medium rounded-xl shadow-lg hover:shadow-blue-500/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300">
+                            <svg class="mr-2 -ml-1 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                            Ajouter le véhicule
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

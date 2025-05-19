@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}Modifier le véhicule - CarWash Pro{% endblock %}
+
+{% block extra_css %}
+<style>
+    .edit-vehicle-container {
+        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+        background-size: cover;
+        background-position: center;
+        min-height: 100vh;
+        padding: 50px 0;
+    }
+    
+    .edit-vehicle-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    
+    .edit-vehicle-title {
+        color: var(--primary-color);
+        font-weight: bold;
+        margin-bottom: 30px;
+    }
+    
+    .form-control {
+        border-radius: 8px;
+        padding: 12px;
+        border: 1px solid #ddd;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+    }
+    
+    .form-label {
+        font-weight: 500;
+        color: var(--primary-color);
+    }
+    
+    .btn-save {
+        background-color: var(--secondary-color);
+        border: none;
+        padding: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-save:hover {
+        background-color: #2980b9;
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="edit-vehicle-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card edit-vehicle-card">
+                    <div class="card-body p-5">
+                        <h1 class="card-title text-center edit-vehicle-title">Modifier le véhicule</h1>
+                        
+                        <form method="post">
+                            {% csrf_token %}
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="brand" class="form-label">Marque</label>
+                                    <input type="text" class="form-control" id="brand" name="brand" value="{{ vehicle.brand }}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="model" class="form-label">Modèle</label>
+                                    <input type="text" class="form-control" id="model" name="model" value="{{ vehicle.model }}" required>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="year" class="form-label">Année</label>
+                                    <input type="number" class="form-control" id="year" name="year" value="{{ vehicle.year }}" min="1900" max="2024" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="license_plate" class="form-label">Immatriculation</label>
+                                    <input type="text" class="form-control" id="license_plate" name="license_plate" value="{{ vehicle.license_plate }}" required>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="color" class="form-label">Couleur</label>
+                                <input type="text" class="form-control" id="color" name="color" value="{{ vehicle.color }}" required>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between">
+                                <a href="{% url 'profile' %}" class="btn btn-outline-secondary">Annuler</a>
+                                <button type="submit" class="btn btn-primary btn-save">Enregistrer les modifications</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

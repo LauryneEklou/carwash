@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Nouveau Rendez-vous - CarWash Pro{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-8">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-gray-800/50 rounded-2xl backdrop-blur-xl border border-gray-700/50 p-8">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
+                    Nouveau Rendez-vous
+                </h1>
+                <p class="mt-2 text-gray-400">Réservez votre créneau en quelques clics</p>
+            </div>
+
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+
+                <!-- Service Selection -->
+                <div class="space-y-2">
+                    <label for="service" class="block text-sm font-medium text-gray-300">Service</label>
+                    <div class="relative">
+                        <select id="service" name="service" required
+                            class="block w-full px-4 py-3 rounded-xl bg-gray-700/50 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="" class="bg-gray-800">Sélectionnez un service</option>
+                            {% for service in services %}
+                            <option value="{{ service.id }}" 
+                                    {% if request.GET.service == service.id|stringformat:"i" %}selected{% endif %}
+                                    class="bg-gray-800">
+                                {{ service.name }} - {{ service.price }} € ({{ service.duration }} min)
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vehicle Selection -->
+                <div class="space-y-2">
+                    <label for="vehicle" class="block text-sm font-medium text-gray-300">Véhicule</label>
+                    <div class="relative">
+                        <select id="vehicle" name="vehicle" required
+                            class="block w-full px-4 py-3 rounded-xl bg-gray-700/50 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="" class="bg-gray-800">Sélectionnez un véhicule</option>
+                            {% for vehicle in vehicles %}
+                            <option value="{{ vehicle.id }}" class="bg-gray-800">
+                                {{ vehicle.brand }} {{ vehicle.model }} ({{ vehicle.license_plate }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Date and Time Selection -->
+                <div class="space-y-2">
+                    <label for="appointment_date" class="block text-sm font-medium text-gray-300">Date et heure</label>
+                    <div class="relative">
+                        <select id="appointment_date" name="appointment_date" required
+                            class="block w-full px-4 py-3 rounded-xl bg-gray-700/50 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="" class="bg-gray-800">Sélectionnez une date et heure</option>
+                            {% for slot in available_slots %}
+                            <option value="{{ slot|date:'Y-m-d H:i' }}" class="bg-gray-800">
+                                {{ slot|date:"d/m/Y H:i" }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div class="space-y-2">
+                    <label for="notes" class="block text-sm font-medium text-gray-300">Notes (optionnel)</label>
+                    <textarea id="notes" name="notes" rows="3" 
+                        class="block w-full px-4 py-3 rounded-xl bg-gray-700/50 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Ajoutez des informations supplémentaires..."></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="pt-4">
+                    <button type="submit" 
+                        class="w-full px-6 py-3 text-lg font-medium text-white bg-gradient-to-r from-blue-500 to-emerald-500 rounded-xl hover:from-blue-600 hover:to-emerald-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 transform transition-all duration-200 hover:scale-[1.02]">
+                        <div class="flex items-center justify-center">
+                            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            Confirmer le rendez-vous
+                        </div>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

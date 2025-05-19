@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load form_filters %}
+
+{% block title %}{{ title }} - CarWash Pro{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-8">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-8">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
+                    {{ title }}
+                </h1>
+                <p class="mt-2 text-gray-400">Modifiez les informations de l'employé</p>
+            </div>
+
+            <form method="post" class="space-y-8">
+                {% csrf_token %}
+                
+                <!-- Personal Information Section -->
+                <div class="bg-gray-900/50 rounded-xl p-6 backdrop-blur-xl border border-gray-700/50">
+                    <h2 class="text-xl font-semibold text-white mb-4">Informations personnelles</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        {% for field in form %}
+                            <div class="form-group">
+                                <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-300 mb-2">
+                                    {{ field.label }}
+                                    {% if field.field.required %}
+                                        <span class="text-red-500">*</span>
+                                    {% endif %}
+                                </label>
+                                <div class="mt-1 relative">
+                                    {{ field|add_class:"w-full bg-gray-800/50 border border-gray-700 rounded-lg py-2 px-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" }}
+                                    {% if field.errors %}
+                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                            <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                            </svg>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                {% if field.errors %}
+                                    <div class="mt-1">
+                                        {% for error in field.errors %}
+                                            <p class="text-red-400 text-sm">{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                {% if field.help_text or field.name == 'password' %}
+                                    <p class="mt-1 text-sm text-gray-400">
+                                        {% if field.name == 'password' %}
+                                            {% if not form.instance.pk %}
+                                                Le mot de passe est requis pour les nouveaux employés.
+                                            {% else %}
+                                                Laissez vide pour conserver le mot de passe actuel.
+                                            {% endif %}
+                                        {% else %}
+                                            {{ field.help_text }}
+                                        {% endif %}
+                                    </p>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Form Errors -->
+                {% if form.non_field_errors %}
+                <div class="bg-red-500/10 border border-red-500/50 rounded-lg p-4">
+                    {% for error in form.non_field_errors %}
+                    <p class="text-red-400 text-sm">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Action Buttons -->
+                <div class="flex items-center justify-between pt-4">
+                    <a href="{% url 'employee_list' %}" 
+                       class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium bg-gray-700 hover:bg-gray-600 text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-900">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                        Retour
+                    </a>
+                    <button type="submit" 
+                            class="inline-flex items-center px-6 py-3 rounded-lg text-sm font-medium bg-gradient-to-r from-blue-500 to-emerald-500 hover:from-blue-600 hover:to-emerald-600 text-white transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 shadow-lg">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Base input styles */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="tel"] {
+        @apply w-full bg-gray-800/50 border border-gray-700 rounded-lg py-2 px-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200;
+    }
+
+    /* Error state */
+    input[type="text"].error,
+    input[type="email"].error,
+    input[type="password"].error,
+    input[type="tel"].error {
+        @apply border-red-500 focus:ring-red-500;
+    }
+
+    /* Error messages */
+    .errorlist {
+        @apply text-red-400 text-sm mt-1 list-none;
+    }
+
+    /* Required field indicator */
+    .required label:after {
+        content: "*";
+        @apply text-red-500 ml-1;
+    }
+</style>
+{% endblock %}

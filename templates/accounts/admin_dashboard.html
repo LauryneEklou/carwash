@@ -1,0 +1,414 @@
+{% extends 'base.html' %}
+
+{% block title %}Tableau de bord administrateur - CarWash Pro{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-container {
+        background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1520340356584-f9917d1eea6f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+        background-size: cover;
+        background-position: center;
+        min-height: 100vh;
+        padding: 30px 0;
+    }
+    
+    .dashboard-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    
+    .dashboard-title {
+        color: var(--primary-color);
+        font-weight: bold;
+        margin-bottom: 20px;
+        font-size: 1.8rem;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .stat-title {
+        color: var(--primary-color);
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+    
+    .stat-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--secondary-color);
+    }
+    
+    .stat-icon {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        margin-bottom: 15px;
+    }
+    
+    .table-responsive {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .table thead {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    
+    .table th {
+        font-weight: 600;
+        padding: 12px;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .table td {
+        padding: 12px;
+        vertical-align: middle;
+        font-size: 0.95rem;
+    }
+    
+    .table tbody tr {
+        transition: all 0.3s ease;
+    }
+    
+    .table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .btn-action {
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-edit {
+        background-color: var(--secondary-color);
+        color: white;
+        border: none;
+    }
+    
+    .btn-edit:hover {
+        background-color: #2980b9;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .btn-delete {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+    }
+    
+    .btn-delete:hover {
+        background-color: #c82333;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .btn-assign {
+        background-color: #28a745;
+        color: white;
+        border: none;
+    }
+    
+    .btn-assign:hover {
+        background-color: #218838;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .nav-tabs {
+        border-bottom: 2px solid var(--primary-color);
+    }
+    
+    .nav-tabs .nav-link {
+        color: var(--primary-color);
+        border: none;
+        padding: 10px 20px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .nav-tabs .nav-link:hover {
+        border: none;
+        color: var(--secondary-color);
+    }
+    
+    .nav-tabs .nav-link.active {
+        color: var(--secondary-color);
+        border: none;
+        border-bottom: 3px solid var(--secondary-color);
+    }
+    
+    .tab-content {
+        padding: 20px 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="container">
+        <h1 class="text-center text-white mb-4">Tableau de bord administrateur</h1>
+        
+        <!-- Statistiques -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <div class="stat-title">Revenus du mois</div>
+                    <div class="stat-value">{{ monthly_revenue }} €</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-car"></i>
+                    </div>
+                    <div class="stat-title">Services réalisés</div>
+                    <div class="stat-value">{{ completed_services }}</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-title">Taux de fidélité</div>
+                    <div class="stat-value">{{ loyalty_rate }}%</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-title">Rendez-vous en attente</div>
+                    <div class="stat-value">{{ pending_appointments }}</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Onglets -->
+        <div class="dashboard-card">
+            <div class="card-body">
+                <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="employees-tab" data-bs-toggle="tab" href="#employees" role="tab">Employés</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="appointments-tab" data-bs-toggle="tab" href="#appointments" role="tab">Rendez-vous</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="reports-tab" data-bs-toggle="tab" href="#reports" role="tab">Rapports</a>
+                    </li>
+                </ul>
+                
+                <div class="tab-content" id="dashboardTabsContent">
+                    <!-- Onglet Employés -->
+                    <div class="tab-pane fade show active" id="employees" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h2 class="dashboard-title">Gestion des employés</h2>
+                            <a href="{% url 'add_employee' %}" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Ajouter un employé
+                            </a>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Email</th>
+                                        <th>Téléphone</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for employee in employees %}
+                                    <tr>
+                                        <td>{{ employee.get_full_name }}</td>
+                                        <td>{{ employee.email }}</td>
+                                        <td>{{ employee.phone_number }}</td>
+                                        <td>
+                                            {% if employee.is_active %}
+                                            <span class="badge bg-success">Actif</span>
+                                            {% else %}
+                                            <span class="badge bg-danger">Inactif</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="d-flex gap-2">
+                                                <a href="{% url 'edit_employee' employee.id %}" class="btn btn-action btn-edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="{% url 'delete_employee' employee.id %}" class="btn btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet employé ?')">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Onglet Rendez-vous -->
+                    <div class="tab-pane fade" id="appointments" role="tabpanel">
+                        <h2 class="dashboard-title">Gestion des rendez-vous</h2>
+                        
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Client</th>
+                                        <th>Date</th>
+                                        <th>Service</th>
+                                        <th>Véhicule</th>
+                                        <th>Statut</th>
+                                        <th>Employé(s)</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for appointment in appointments %}
+                                    <tr>
+                                        <td>{{ appointment.user.get_full_name }}</td>
+                                        <td>{{ appointment.date|date:"d/m/Y H:i" }}</td>
+                                        <td>{{ appointment.service.name }}</td>
+                                        <td>{{ appointment.vehicle.brand }} {{ appointment.vehicle.model }}</td>
+                                        <td>
+                                            {% if appointment.status == 'pending' %}
+                                            <span class="badge bg-warning">En attente</span>
+                                            {% elif appointment.status == 'accepted' %}
+                                            <span class="badge bg-success">Accepté</span>
+                                            {% elif appointment.status == 'completed' %}
+                                            <span class="badge bg-info">Terminé</span>
+                                            {% else %}
+                                            <span class="badge bg-danger">Annulé</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% for employee in appointment.employees.all %}
+                                            <span class="badge bg-primary">{{ employee.get_full_name }}</span>
+                                            {% empty %}
+                                            <span class="badge bg-secondary">Non assigné</span>
+                                            {% endfor %}
+                                        </td>
+                                        <td>
+                                            <div class="d-flex gap-2">
+                                                {% if appointment.status == 'pending' %}
+                                                <a href="{% url 'assign_employees' appointment.id %}" class="btn btn-action btn-assign" title="Assigner des employés">
+                                                    <i class="fas fa-user-plus"></i>
+                                                </a>
+                                                {% endif %}
+                                                <a href="{% url 'edit_appointment' appointment.id %}" class="btn btn-action btn-edit" title="Modifier">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="{% url 'delete_appointment' appointment.id %}" class="btn btn-action btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous ?')" title="Supprimer">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Onglet Rapports -->
+                    <div class="tab-pane fade" id="reports" role="tabpanel">
+                        <h2 class="dashboard-title">Rapports et analyses</h2>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="dashboard-card">
+                                    <div class="card-body">
+                                        <h3 class="h5 mb-3">Services les plus demandés</h3>
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Service</th>
+                                                        <th>Nombre de demandes</th>
+                                                        <th>Revenus</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for service in top_services %}
+                                                    <tr>
+                                                        <td>{{ service.name }}</td>
+                                                        <td>{{ service.count }}</td>
+                                                        <td>{{ service.revenue }} €</td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="dashboard-card">
+                                    <div class="card-body">
+                                        <h3 class="h5 mb-3">Rapports périodiques</h3>
+                                        <div class="d-flex gap-2 mb-3">
+                                            <a href="{% url 'daily_report' %}" class="btn btn-outline-primary">Journalier</a>
+                                            <a href="{% url 'weekly_report' %}" class="btn btn-outline-primary">Hebdomadaire</a>
+                                            <a href="{% url 'monthly_report' %}" class="btn btn-outline-primary">Mensuel</a>
+                                        </div>
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Période</th>
+                                                        <th>Revenus</th>
+                                                        <th>Services</th>
+                                                        <th>Clients</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for report in reports %}
+                                                    <tr>
+                                                        <td>{{ report.period }}</td>
+                                                        <td>{{ report.revenue }} €</td>
+                                                        <td>{{ report.services }}</td>
+                                                        <td>{{ report.customers }}</td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
